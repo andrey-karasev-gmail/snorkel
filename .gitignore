@@ -1,0 +1,5 @@
+.DS_Store
+environment/app/node_modules/
+tests/__pycache__/
+jobs/
+*.pyc

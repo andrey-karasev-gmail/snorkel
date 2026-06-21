@@ -1,0 +1,11 @@
+{
+  "name": "@monostack/cli",
+  "version": "1.0.0",
+  "bin": {
+    "monostack": "./index.js"
+  },
+  "dependencies": {
+    "commander": "11.0.0",
+    "chalk": "4.1.2"
+  }
+}
