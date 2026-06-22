@@ -1,6 +1,5 @@
 """Tests for the npm workspace override resolver task."""
 import json
-import subprocess
 from pathlib import Path
 
 import pytest

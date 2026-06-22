@@ -1,15 +1,12 @@
-FROM public.ecr.aws/docker/library/node:24.4-alpine@sha256:820e86612c21d0636580206d802a726f2595366e1b867e564cbc652024151e8a
+FROM public.ecr.aws/docker/library/node:22-bookworm-slim@sha256:f3a68cf41a855d227d1b0ab832bed9749469ef38cf4f58182fb8c893bc462383
 
-RUN sed -i 's|https://dl-cdn.alpinelinux.org|http://dl-cdn.alpinelinux.org|g' /etc/apk/repositories \
-    && apk add --no-cache \
-        bash \
+RUN apt-get update && apt-get install -y --no-install-recommends \
         tmux \
         python3 \
-        py3-pip
+        python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir --break-system-packages \
-    --trusted-host pypi.org \
-    --trusted-host files.pythonhosted.org \
     asciinema==2.4.0 \
     pytest==8.4.1 \
     pytest-json-ctrf==0.3.5
@@ -23,7 +20,7 @@ COPY app/packages/ui/package.json ./packages/ui/
 COPY app/packages/cli/package.json ./packages/cli/
 
 RUN npm config set strict-ssl false \
-    && npm install
+    && npm ci
 
 # Pre-cache the override target versions so solve.sh can run npm install offline
 RUN npm install --no-save \

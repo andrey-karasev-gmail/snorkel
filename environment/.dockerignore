@@ -1,2 +1,8 @@
-app/node_modules
-app/packages/*/node_modules
+.git
+.gitignore
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/node_modules/

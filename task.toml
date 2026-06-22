@@ -12,7 +12,7 @@ subcategories = [ "long_context" ]
 # The number of milestones in the task (can be zero if not a milestone task)
 number_of_milestones = 0
 # Size of the codebase: minimal -> 0-20 files, small -> 20+ files, large -> 200+ files
-codebase_size = "small"
+codebase_size = "minimal"
 # Coding languages used in the oracle solution or required by the agent
 languages = [ "javascript" ]
 # For tool_specific, api_integration, and db_interaction subcategories, please include specific tool, api framework, or database software
