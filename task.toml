@@ -3,7 +3,7 @@ version = "2.0"
 
 # Task metadata (author, difficulty, categorization)
 [metadata]
-author_name = "andrey.karasev"
+author_name = "Andrey Karasev"
 author_email = "andrey.karasev@outlook.com"
 difficulty = "hard"
 category = "software-engineering"
