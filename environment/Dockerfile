@@ -20,12 +20,11 @@ COPY app/packages/cli/package.json ./packages/cli/
 RUN npm config set strict-ssl false \
     && npm ci
 
-# Pre-cache the override target versions so solve.sh can run npm install offline
 RUN npm install --no-save \
     lodash@4.17.21 \
-    semver@7.6.3 \
-    axios@1.6.8 \
-    express@4.19.2 \
+    semver@7.5.4 semver@7.6.0 semver@7.6.3 \
+    axios@1.4.0 axios@1.6.8 \
+    express@4.18.3 express@4.19.2 \
     react@18.3.1
 
 COPY app/ .
