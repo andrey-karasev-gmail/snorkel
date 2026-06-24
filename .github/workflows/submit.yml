@@ -30,6 +30,11 @@ jobs:
       - name: Install STB
         run: uv tool install snorkelai-stb --find-links https://snorkel-python-wheels.s3.us-west-2.amazonaws.com/stb/index.html
 
+      - name: Configure STB environment
+        run: |
+          mkdir -p ~/.config/stb
+          printf '[auth]\nenv = prod\n' > ~/.config/stb/config.ini
+
       - name: Submit to Snorkel
         env:
           SNORKEL_API_KEY: ${{ secrets.SNORKEL_API_KEY }}
