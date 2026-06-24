@@ -20,7 +20,95 @@ on:
         default: false
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          MISSING=0
+          for f in task.toml instruction.md environment/Dockerfile solution/solve.sh tests/test.sh tests/test_outputs.py; do
+            if [ ! -f "$f" ]; then
+              echo "❌ Missing required file: $f"
+              MISSING=1
+            else
+              echo "✅ $f"
+            fi
+          done
+          exit $MISSING
+
+      - name: Validate task.toml fields
+        run: |
+          python3 - <<'EOF'
+          import sys
+          try:
+              import tomllib
+          except ImportError:
+              import tomli as tomllib
+
+          with open("task.toml", "rb") as f:
+              config = tomllib.load(f)
+
+          errors = []
+          meta = config.get("metadata", {})
+
+          difficulty = meta.get("difficulty", "")
+          if difficulty not in ("easy", "medium", "hard", "unknown"):
+              errors.append(f"❌ Invalid difficulty '{difficulty}' (must be easy, medium, hard, or unknown)")
+          else:
+              print(f"✅ difficulty = {difficulty}")
+
+          category = meta.get("category", "")
+          if not category:
+              errors.append("❌ Missing category")
+          elif category in ("software-engineering", "debugging"):
+              errors.append(f"❌ Category '{category}' is blocked for this project")
+          else:
+              print(f"✅ category = {category}")
+
+          subcategories = meta.get("subcategories", [])
+          if not subcategories:
+              errors.append("❌ Missing subcategories")
+          else:
+              print(f"✅ subcategories = {subcategories}")
+
+          for field in ("author_name", "author_email", "codebase_size", "languages"):
+              if not meta.get(field):
+                  errors.append(f"❌ Missing metadata.{field}")
+              else:
+                  print(f"✅ {field} = {meta[field]}")
+
+          verifier = config.get("verifier", {})
+          if not verifier.get("timeout_sec"):
+              errors.append("❌ Missing verifier.timeout_sec")
+
+          agent = config.get("agent", {})
+          if not agent.get("timeout_sec"):
+              errors.append("❌ Missing agent.timeout_sec")
+
+          if errors:
+              for e in errors:
+                  print(e)
+              sys.exit(1)
+          EOF
+
+      - name: Ruff lint
+        run: |
+          pip install ruff --quiet
+          ruff check tests/test_outputs.py
+
+      - name: Check solve.sh shebang
+        run: |
+          SHEBANG=$(head -1 solution/solve.sh)
+          if echo "$SHEBANG" | grep -q "bash"; then
+            echo "✅ solve.sh uses bash"
+          else
+            echo "⚠️  solve.sh shebang: $SHEBANG (recommend #!/usr/bin/env bash)"
+          fi
+
   submit:
+    needs: validate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
